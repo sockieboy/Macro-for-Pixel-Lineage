@@ -4,12 +4,35 @@ import time
 import numpy as np
 from pynput import keyboard
 import os
+import threading
 auto.FAILSAFE = True
 auto.PAUSE = 0.05
 
 Options = {"AttackS","SkillS","ScrollS","GuardS","MeditatS","SatchelS"}
 Selected = ''
+stop = threading.Event()
 
+def main():
+    while not stop.is_set():
+        PhaseCheck()
+        wait(0.1)
+def StartExitFunction(key):
+    global main_thread
+    if key == keyboard.Key.f8:
+        if main_thread is None or not main_thread.is_alive():
+            print("ON")
+            stop.clear()
+            main_thread = threading.Thread(target=main, daemon=True)
+            main_thread.start()
+        else:
+            print("OFF")
+            stop.set()          # main finishes its current loop and stops
+    elif key == keyboard.Key.esc:
+        print("Exiting")
+        os._exit(0)
+with keyboard.Listener(on_press=StartExitFunction) as listener:
+    print("F8 = start, Esc = exit")
+    listener.join() 
 def wait(x):
     time.sleep(x)
 def ReturnMouse():
@@ -55,26 +78,25 @@ def PathSelection():
         elif auto.pixelMatchesColor(815, 700+200*a, (170, 130, 240), tolerance=10):
             key.moveTo(1200, 700+200*a)
             key.click()
-            while auto.pixelMatchesColor(1772, 708, (235, 205, 140), tolerance=10) == False:
+            while auto.pixelMatchesColor(1772, 708, (235, 205, 140), tolerance=10) == False and auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
                 key.moveTo(1772, 708)
                 key.click()
         #scout
         elif auto.pixelMatchesColor(815, 700+200*a, (240, 200, 90), tolerance=10):
             key.moveTo(1200, 700+200*a)
             key.click()
-            while auto.pixelMatchesColor(1941, 843, (235, 205, 140), tolerance=10) == False:
+            while auto.pixelMatchesColor(1941, 843, (235, 205, 140), tolerance=10) == False and auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
                 key.moveTo(1941, 843)
                 key.click()
         #trader
         elif auto.pixelMatchesColor(815, 700+200*a, (92, 170, 76), tolerance=10):
             key.moveTo(1200, 700+200*a)
             key.click()
-            while auto.pixelMatchesColor(1838, 848, (235, 205, 140), tolerance=10) == False:
+            while auto.pixelMatchesColor(1838, 848, (235, 205, 140), tolerance=10) == False and auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
                 key.moveTo(1838, 848)
                 key.click()
     ReturnMouse()
     AttackSequence()
-
 def AttackSequence():
     wait(1)
     while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
@@ -104,19 +126,7 @@ def AttackSequence():
     PhaseCheck()
 
     PhaseCheck()
-def main():
-    PhaseCheck()
-main()
-def StartExitFunction(key):
-    if key == keyboard.Key.f8:
-        print("ON")
-        main()
-    elif key == keyboard.Key.esc:
-        print("Exiting")
-        os._exit(0)
-with keyboard.Listener(on_press=StartExitFunction) as listener:
-    print("F8 = start, Press esc to exit")
-    listener.join()
-    
+
+
 
         
