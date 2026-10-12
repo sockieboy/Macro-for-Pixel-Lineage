@@ -12,7 +12,8 @@ Selected = ''
 
 def wait(x):
     time.sleep(x)
-
+def ReturnMouse():
+    key.moveTo(100,1000)
 def WhatIsSelected():
     loops = 50
     for i in loops:
@@ -32,7 +33,6 @@ def SelectionMove(Selection):
             var = abs(Selection-WhatIsSelected())
         for a in range(var):
            key.press("s")
- 
 def PhaseCheck():
     if auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10):
         PathSelection()
@@ -46,6 +46,7 @@ def PathSelection():
         if auto.pixelMatchesColor(815, 700+200*a, (240, 110, 90), tolerance=10):
             key.moveTo(1200, 700+200*a)
             key.click()
+            
         #mini boss
         elif auto.pixelMatchesColor(815, 700+200*a, (255, 120, 60), tolerance=10):
             key.moveTo(1200, 700+200*a)
@@ -71,6 +72,7 @@ def PathSelection():
             while auto.pixelMatchesColor(1838, 848, (235, 205, 140), tolerance=10) == False:
                 key.moveTo(1838, 848)
                 key.click()
+    ReturnMouse()
     AttackSequence()
 
 def AttackSequence():
@@ -98,6 +100,7 @@ def AttackSequence():
     elif auto.pixelMatchesColor(1353,1031, (235,205,140), tolerance=10):
         key.moveTo(1353,1031)
         key.click()
+    ReturnMouse()
     PhaseCheck()
 
     PhaseCheck()
