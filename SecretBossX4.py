@@ -83,6 +83,8 @@ def AttackSequence():
     key.press("w")
     key.press("space")
     key.press("space")
+    while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
+        wait(.2)
     if auto.pixelMatchesColor(2072, 103, (232, 192, 92), tolerance=10):
         key.press("w")
         key.press("space")
@@ -100,8 +102,8 @@ def AttackSequence():
 
     PhaseCheck()
 def main():
-    AttackSequence()
-
+    PhaseCheck()
+main()
 def StartExitFunction(key):
     if key == keyboard.Key.f8:
         print("ON")
