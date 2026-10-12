@@ -11,28 +11,9 @@ auto.PAUSE = 0.05
 Options = {"AttackS","SkillS","ScrollS","GuardS","MeditatS","SatchelS"}
 Selected = ''
 stop = threading.Event()
+main_thread = None
 
-def main():
-    while not stop.is_set():
-        PhaseCheck()
-        wait(0.1)
-def StartExitFunction(key):
-    global main_thread
-    if key == keyboard.Key.f8:
-        if main_thread is None or not main_thread.is_alive():
-            print("ON")
-            stop.clear()
-            main_thread = threading.Thread(target=main, daemon=True)
-            main_thread.start()
-        else:
-            print("OFF")
-            stop.set()          # main finishes its current loop and stops
-    elif key == keyboard.Key.esc:
-        print("Exiting")
-        os._exit(0)
-with keyboard.Listener(on_press=StartExitFunction) as listener:
-    print("F8 = start, Esc = exit")
-    listener.join() 
+
 def wait(x):
     time.sleep(x)
 def ReturnMouse():
@@ -126,7 +107,27 @@ def AttackSequence():
     PhaseCheck()
 
     PhaseCheck()
-
+def main():
+    while not stop.is_set():
+        PhaseCheck()
+        wait(0.1)
+def StartExitFunction(key):
+    global main_thread
+    if key == keyboard.Key.f8:
+        if main_thread is None or not main_thread.is_alive():
+            print("ON")
+            stop.clear()
+            main_thread = threading.Thread(target=main, daemon=True)
+            main_thread.start()
+        else:
+            print("OFF")
+            stop.set()          # main finishes its current loop and stops
+    elif key == keyboard.Key.esc:
+        print("Exiting")
+        os._exit(0)
+with keyboard.Listener(on_press=StartExitFunction) as listener:
+    print("F8 = start, Esc = exit")
+    listener.join() 
 
 
         
