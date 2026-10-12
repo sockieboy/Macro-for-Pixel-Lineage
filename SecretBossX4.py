@@ -12,21 +12,40 @@ def wait(x):
 auto.FAILSAFE = True
 auto.PAUSE = 0.05
 
+#Finds whats being selected
 
-def SelectingTheSkillButton(checks=40):
-    """Checks for the arrow up to `checks` times. Returns True the moment it's found."""
-    for i in range(checks):
-        if auto.pixelMatchesColor(49, 1294, (231, 196, 120), tolerance=10):
-            return True
-        wait(0.025)
-    return False
+Options = {"AttackS","SkillS","ScrollS","GuardS","MeditatS","SatchelS"}
+Selected = ''
+def WhatIsSelected():
+    loops = 50
+    for i in loops:
+        for a in len(Options):
+            if auto.pixelMatchesColor(50, 1245+a*45, (231, 196, 120), tolerance=10):
+                global Selected
+                Selected = Options[a]
+                return a
+        wait(.025)
+  
+def SelectionMove(Selection):
+    if WhatIsSelected() == None:
+        PhaseCheck()
+    elif WhatIsSelected() != Selection:
+        if WhatIsSelected() < Selection:
+            var = 6-abs(WhatIsSelected-Selection)
+        else:
+            var = abs(Selection-WhatIsSelected())
+        for a in range(var):
+           key.press("s")
+ 
+def PhaseCheck():
+    if auto.pixelMatchesColor(218, 1430, (235, 205, 140), tolerance=10):
+        
+    return 'phase'
+
 
 def AttackSequence():
     # selects big AOE attack (change if needed)
-    while not SelectingTheSkillButton():
-        key.press("s")
-    print("works")   # arrow found, continue from here
-
+    WhatIsSelected()
 def main():
     AttackSequence()
 
