@@ -9,7 +9,7 @@ auto.FAILSAFE = True
 auto.PAUSE = 0.05
 
 Options = {"AttackS","SkillS","ScrollS","GuardS","MeditatS","SatchelS"}
-Selected = ''
+RGBofPathSelectionsList = [[240, 110, 90], [240, 110, 90], [170, 130, 240], [240, 200, 90], [120, 220, 160], [255, 80, 90] ]
 stop = threading.Event()
 main_thread = None
 
@@ -19,96 +19,117 @@ def wait(x):
 def ReturnMouse():
     key.moveTo(100,1000)
 def WhatIsSelected():
-    loops = 50
-    for i in loops:
-        for a in len(Options):
-            if auto.pixelMatchesColor(50, 1245+a*45, (231, 196, 120), tolerance=10):
-                global Selected
-                Selected = Options[a]
+    for i in range(50):
+        for a in range(6):
+            if auto.pixelMatchesColor(300, 1225+(a*50), (30, 45, 65), tolerance=0):
+                print(a)
                 return a
         wait(.025) 
 def SelectionMove(Selection):
+    print("selecting move")
     if WhatIsSelected() == None:
         PhaseCheck()
     elif WhatIsSelected() != Selection:
-        if WhatIsSelected() < Selection:
-            var = 6-abs(WhatIsSelected-Selection)
+        if WhatIsSelected() > Selection:
+            for a in range(WhatIsSelected() - Selection):
+                key.press("w")
         else:
-            var = abs(Selection-WhatIsSelected())
-        for a in range(var):
-           key.press("s")
+            for a in range(Selection-WhatIsSelected()):
+                key.press("s")
 def PhaseCheck():
-    if auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10):
-        PathSelection()
-        print("pathselecting")
-    elif auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10):
-        AttackSequence()
-        print("attack")
-def PathSelection():
-    for a in range(3):
-        #champion
-        if auto.pixelMatchesColor(815, 700+200*a, (240, 110, 90), tolerance=10):
-            key.moveTo(1200, 700+200*a)
-            key.click()
-            
-        #mini boss
-        elif auto.pixelMatchesColor(815, 700+200*a, (255, 120, 60), tolerance=10):
-            key.moveTo(1200, 700+200*a)
-            key.click()
-        #bush
-        elif auto.pixelMatchesColor(815, 700+200*a, (170, 130, 240), tolerance=10):
-            key.moveTo(1200, 700+200*a)
-            key.click()
-            while auto.pixelMatchesColor(1772, 708, (235, 205, 140), tolerance=10) == False and auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
-                key.moveTo(1772, 708)
-                key.click()
-        #scout
-        elif auto.pixelMatchesColor(815, 700+200*a, (240, 200, 90), tolerance=10):
-            key.moveTo(1200, 700+200*a)
-            key.click()
-            while auto.pixelMatchesColor(1941, 843, (235, 205, 140), tolerance=10) == False and auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
-                key.moveTo(1941, 843)
-                key.click()
-        #trader
-        elif auto.pixelMatchesColor(815, 700+200*a, (92, 170, 76), tolerance=10):
-            key.moveTo(1200, 700+200*a)
-            key.click()
-            while auto.pixelMatchesColor(1838, 848, (235, 205, 140), tolerance=10) == False and auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
-                key.moveTo(1838, 848)
-                key.click()
+    print("phase checking")
     ReturnMouse()
-    AttackSequence()
+    while True:
+        if auto.pixelMatchesColor(2121, 1168, (231, 196, 120), tolerance=10):
+            key.moveTo(2349, 1171)
+            key.moveRel(1, 0)
+            key.doubleClick() 
+            ReturnMouse()
+        if auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10):
+            print("pathselecting")
+            PathSelection()
+        elif auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10):
+            print("attack")
+            AttackSequence()
+def PathSelection():
+    for a in range(5):
+        for b in range(3):
+            if auto.pixelMatchesColor(815, 700+200*b, (RGBofPathSelectionsList[a]), tolerance=10):
+                key.moveTo(1200, 700+200*b)
+                key.moveRel(1, 0)
+                key.doubleClick()
+                if a == 2:
+                    while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
+                        key.moveTo(1772, 708)
+                        key.moveRel(1, 0)
+                        key.doubleClick() 
+                elif a == 3:
+                    while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
+                        key.moveTo(1941, 843)
+                        key.moveRel(1, 0)
+                        key.doubleClick() 
+                elif a == 4:
+                    while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
+                        key.moveTo(1838, 848)
+                        key.moveRel(1, 0)
+                        key.doubleClick() 
+            elif auto.pixelMatchesColor(815, 859, (255, 80, 90), tolerance=10):
+                key.moveTo(1300, 1000)
+                key.moveRel(1, 0)
+                key.doubleClick()    
+                break
 def AttackSequence():
-    wait(1)
+    boss = False
+    ReturnMouse()
     while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
-        wait(.2)
-    SelectionMove(2)
+        wait(.1)
+    while auto.pixelMatchesColor(1000, 1400, (0, 0, 0), tolerance=0) == True:
+        wait(.1)
+        boss = True
+    SelectionMove(1)
     key.press("space")
     key.press("w")
     key.press("w")
     key.press("space")
     key.press("space")
-    while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
-        wait(.2)
-    if auto.pixelMatchesColor(2072, 103, (232, 192, 92), tolerance=10):
+    if boss == True:
+        while WhatIsSelected() == None:
+            key.press("space")
+            wait(.05)
+        wait(.5)
         key.press("w")
         key.press("space")
-    while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == True:
+        #fix this, spam space bar 
+    while auto.pixelMatchesColor(318,1442, (106,92,63), tolerance=10) == False and auto.pixelMatchesColor(1353,1031, (235,205,140), tolerance=10) == False and auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10) == False:
         key.press("space")
         wait(.1)
-    wait(1)
-    if auto.pixelMatchesColor(318,1442, (106,92,63), tolerance=10):
-        key.moveTo(1364, 900)
-        key.click()
-    elif auto.pixelMatchesColor(1353,1031, (235,205,140), tolerance=10):
-        key.moveTo(1353,1031)
-        key.click()
+    while True:
+        print("chosing path")
+        key.moveRel(1, 0)
+        ReturnMouse()
+        if auto.pixelMatchesColor(318,1442, (106,92,63), tolerance=10):
+            key.moveTo(1364, 900)
+            key.moveRel(1, 0)
+            key.doubleClick() 
+            break
+        elif auto.pixelMatchesColor(1353,1031, (235,205,140), tolerance=10):
+            key.moveTo(1353,1031)
+            key.moveRel(1, 0)
+            key.doubleClick() 
+            break
+        elif auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=0):
+            break
+    ReturnMouse()
+    key.moveRel(1, 0)
+    ReturnMouse()
+    key.moveRel(1, 0)
     ReturnMouse()
     PhaseCheck()
 
     PhaseCheck()
 def main():
     while not stop.is_set():
+        ReturnMouse()
         PhaseCheck()
         wait(0.1)
 def StartExitFunction(key):
