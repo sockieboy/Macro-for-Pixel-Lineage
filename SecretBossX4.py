@@ -112,9 +112,8 @@ def AttackSequence():
             key.moveTo(1362, 1042)
             key.moveRel(1, 0)
             key.doubleClick()
-            break
    # give the screen time to update
-        if auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10):
+        if auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10) or WhatIsSelected() != None:
             break
     ReturnMouse()
     key.moveRel(1, 0)
