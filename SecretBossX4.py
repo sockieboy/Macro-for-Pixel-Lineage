@@ -1,7 +1,6 @@
 import pyautogui as auto
 import pydirectinput as key
 import time
-import numpy as np
 from pynput import keyboard
 import os
 import threading
@@ -26,7 +25,7 @@ def WhatIsSelected():
 def SelectionMove(Selection):
     print("selecting move")
     if WhatIsSelected() == None:
-        PhaseCheck()
+        return False                                  # CHANGED: was PhaseCheck()
     elif WhatIsSelected() != Selection:
         if WhatIsSelected() > Selection:
             for a in range(WhatIsSelected() - Selection):
@@ -37,7 +36,7 @@ def SelectionMove(Selection):
 def PhaseCheck():
     print("phase checking")
     ReturnMouse()
-    while True:
+    while not stop.is_set():                          # CHANGED: was while True
         if auto.pixelMatchesColor(2121, 1168, (231, 196, 120), tolerance=10):
             key.moveTo(2349, 1171)
             key.moveRel(1, 0)
@@ -52,7 +51,7 @@ def PhaseCheck():
 def PathSelection():
     for a in range(5):
         for b in range(3):
-            if auto.pixelMatchesColor(815, 700+200*b, (RGBofPathSelectionsList[a]), tolerance=10):
+            if auto.pixelMatchesColor(815, 700+200*b, (RGBofPathSelectionsList[a]), tolerance=0):
                 key.moveTo(1200, 700+200*b)
                 key.moveRel(1, 0)
                 key.doubleClick()
@@ -77,11 +76,13 @@ def PathSelection():
                 key.doubleClick()    
                 break
 def AttackSequence():
+    print("attacking")
     boss = False
     ReturnMouse()
     while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
         wait(.01)
-    SelectionMove(1)
+    if SelectionMove(1) == False:                     # CHANGED: go back to PhaseCheck like before
+        return
     key.press("space")
     key.press("w")
     key.press("w")
@@ -118,9 +119,7 @@ def AttackSequence():
     ReturnMouse()
     key.moveRel(1, 0)
     ReturnMouse()
-    PhaseCheck()
-
-    PhaseCheck()
+    # CHANGED: removed the two PhaseCheck() calls; returning goes back to PhaseCheck's loop
 def main():
     while not stop.is_set():
         ReturnMouse()
@@ -142,7 +141,4 @@ def StartExitFunction(key):
         os._exit(0)
 with keyboard.Listener(on_press=StartExitFunction) as listener:
     print("F8 = start, Esc = exit")
-    listener.join() 
-
-
-        
+    listener.join()
