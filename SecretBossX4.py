@@ -9,7 +9,7 @@ auto.FAILSAFE = True
 auto.PAUSE = 0.05
 
 Options = {"AttackS","SkillS","ScrollS","GuardS","MeditatS","SatchelS"}
-RGBofPathSelectionsList = [[240, 110, 90], [240, 110, 90], [170, 130, 240], [240, 200, 90], [120, 220, 160], [255, 80, 90] ]
+RGBofPathSelectionsList = [[240, 110, 90], [255, 120, 60], [170, 130, 240], [240, 200, 90], [120, 220, 160], [255, 80, 90] ]
 stop = threading.Event()
 main_thread = None
 
@@ -19,12 +19,10 @@ def wait(x):
 def ReturnMouse():
     key.moveTo(100,1000)
 def WhatIsSelected():
-    for i in range(50):
-        for a in range(6):
-            if auto.pixelMatchesColor(300, 1225+(a*50), (30, 45, 65), tolerance=0):
-                print(a)
-                return a
-        wait(.025) 
+    for a in range(6):
+        if auto.pixelMatchesColor(300, 1225+(a*50), (30, 45, 65), tolerance=0):
+            print(a)
+            return a
 def SelectionMove(Selection):
     print("selecting move")
     if WhatIsSelected() == None:
@@ -82,42 +80,41 @@ def AttackSequence():
     boss = False
     ReturnMouse()
     while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10) == False:
-        wait(.1)
-    while auto.pixelMatchesColor(1000, 1400, (0, 0, 0), tolerance=0) == True:
-        wait(.1)
-        boss = True
+        wait(.01)
     SelectionMove(1)
     key.press("space")
     key.press("w")
     key.press("w")
     key.press("space")
     key.press("space")
-    if boss == True:
-        while WhatIsSelected() == None:
-            key.press("space")
-            wait(.05)
-        wait(.5)
-        key.press("w")
-        key.press("space")
+    while auto.pixelMatchesColor(2349, 1171, (214, 60, 56), tolerance=10):
+        key.moveTo(231,1222)
+        key.moveRel(1, 0)
+        key.doubleClick()
+        wait(.05)
         #fix this, spam space bar 
-    while auto.pixelMatchesColor(318,1442, (106,92,63), tolerance=10) == False and auto.pixelMatchesColor(1353,1031, (235,205,140), tolerance=10) == False and auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10) == False:
+    while auto.pixelMatchesColor(1360, 886, (231, 196, 120), tolerance=10) == False and auto.pixelMatchesColor(1362, 1042, (231, 196, 120), tolerance=10) == False and auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10) == False:
         key.press("space")
         wait(.1)
+    ReturnMouse()
+    key.moveRel(1, 0)
+    ReturnMouse()
     while True:
-        print("chosing path")
-        key.moveRel(1, 0)
         ReturnMouse()
-        if auto.pixelMatchesColor(318,1442, (106,92,63), tolerance=10):
-            key.moveTo(1364, 900)
+        print("choosing path")
+        # after bosses
+        if auto.pixelMatchesColor(1360, 886, (231, 196, 120), tolerance=10):
+            key.moveTo(1360, 886)
             key.moveRel(1, 0)
-            key.doubleClick() 
-            break
-        elif auto.pixelMatchesColor(1353,1031, (235,205,140), tolerance=10):
-            key.moveTo(1353,1031)
+            key.doubleClick()
+        #after stage finishes
+        elif auto.pixelMatchesColor(1362, 1042, (231, 196, 120), tolerance=10):
+            key.moveTo(1362, 1042)
             key.moveRel(1, 0)
-            key.doubleClick() 
+            key.doubleClick()
             break
-        elif auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=0):
+   # give the screen time to update
+        if auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10):
             break
     ReturnMouse()
     key.moveRel(1, 0)
