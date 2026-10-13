@@ -96,11 +96,9 @@ def AttackSequence():
     while auto.pixelMatchesColor(1360, 886, (231, 196, 120), tolerance=10) == False and auto.pixelMatchesColor(1362, 1042, (231, 196, 120), tolerance=10) == False and auto.pixelMatchesColor(218, 1430, (231, 196, 120), tolerance=10) == False:
         key.press("space")
         wait(.1)
-    ReturnMouse()
-    key.moveRel(1, 0)
-    ReturnMouse()
     while True:
         ReturnMouse()
+        key.moveRel(1, 0)
         print("choosing path")
         # after bosses
         if auto.pixelMatchesColor(1360, 886, (231, 196, 120), tolerance=10):
